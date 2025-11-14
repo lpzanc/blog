@@ -64,7 +64,7 @@
 
         <nav class="nav">
             <button data-page="home">首页</button>
-            <button data-page="works">作品</button>
+            <button data-page="works">工作台</button>
             <button data-page="blog">随笔</button>
             <button data-page="about">关于</button>
             </nav>
@@ -79,10 +79,10 @@
 
                 <!--右侧内容-->
                 <main class="main">
-                    <section id="name" class="active"><h1>客官来了</h1>
-                    <p>点击左侧按钮可局部切换内容，点击圆形按钮可换背景</p></section>
+                    <section id="name" class="active"><h1>欢迎</h1>
+                    <p>可点击左侧的圆形按钮切换背景</p></section>
                      <section id="name" ><h1>合集</h1>
-                    <p>这里可以放一些项目卡片或者瀑布流</p></section>
+                    <p>实验设计大合集</p></section>
                      <section id="blog" ><h1>随笔</h1>
                     <p>博客列表，支持Markdown渲染更佳</p></section>
                      <section id="about"><h1>找到我</h1>
@@ -103,7 +103,7 @@
 
     };
     document.getElementById('name').onclick = ()=>{
-        const n= prompt('请输入新名字','Yourname');
+        const n= prompt('你准备直接操作它了？','离殇');
         if(n) document.querySelector('.name').textContent = n;
     };
     /*中间导航切换*/
@@ -122,6 +122,7 @@
 
 
             
+
 
 
 
