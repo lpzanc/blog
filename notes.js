@@ -1,78 +1,125 @@
-const DB_NAME = 'blogNotes', STORE = 'notes';
-let db;
-
-async function openDB() {
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, 1);
-    req.onerror = () => rej();
-    req.onsuccess = () => { db = req.result; res(); };
-    req.onupgradeneeded = e => {
-      const d = e.target.result;
-      if (!d.objectStoreNames.contains(STORE))
-        d.createObjectStore(STORE, {keyPath: 'id', autoIncrement: true});
-    };
-  });
+/* ===== 现代卡片风（零美工） ===== */
+:root{
+  --bg:#f5f7fa;
+  --card:#ffffff;
+  --primary:#0366d6;
+  --danger:#d73a49;
+  --text:#24292e;
+  --border:#e1e4e8;
+  --radius:8px;
+  --shadow:0 2px 6px rgba(0,0,0,.05);
 }
 
-async function addNote(note) {
-  const tx = db.transaction([STORE], 'readwrite');
-  tx.objectStore(STORE).add(note);
+body{
+  margin:0;
+  padding:40px;
+  background:var(--bg);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
+  color:var(--text);
+  line-height:1.6;
 }
 
-async function getAllNotes() {
-  return new Promise(res => {
-    const tx = db.transaction([STORE], 'readonly');
-    const store = tx.objectStore(STORE);
-    const arr = [];
-    store.openCursor().onsuccess = e => {
-      const c = e.target.result;
-      if (c) { arr.push(c.value); c.continue(); }
-      else res(arr.reverse());
-    };
-  });
+h1{margin-top:0;font-size:28px;font-weight:600}
+
+/* 顶部操作区 */
+.top-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:25px;
 }
 
-async function deleteNote(id) {
-  const tx = db.transaction([STORE], 'readwrite');
-  tx.objectStore(STORE).delete(id);
+.back-btn{
+  text-decoration:none;
+  color:var(--primary);
+  font-size:14px;
 }
 
-// 页面逻辑
-function showEditor() {
-  document.getElementById('editor').style.display = 'block';
-  document.getElementById('list').style.display = 'none';
-  document.getElementById('title').value = '';
-  document.getElementById('body').value = '';
+.new-btn{
+  padding:8px 16px;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:var(--radius);
+  cursor:pointer;
+  font-size:14px;
+  transition:background .2s;
 }
+.new-btn:hover{background:#0256cc}
 
-function cancelEdit() {
-  document.getElementById('editor').style.display = 'none';
-  document.getElementById('list').style.display = 'block';
+/* 编辑器卡片 */
+#editor{
+  background:var(--card);
+  padding:20px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  margin-bottom:25px;
 }
-
-async function saveNote() {
-  const body = document.getElementById('body').value.trim();
-  if (!body) return alert('正文不能为空');
-  await addNote({
-    title: document.getElementById('title').value.trim(),
-    body: body,
-    date: new Date().toLocaleString()
-  });
-  cancelEdit();
-  loadList();
+#editor input,#editor textarea{
+  width:100%;
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  font-size:15px;
+  resize:vertical;
 }
-
-async function loadList() {
-  await openDB();
-  const notes = await getAllNotes();
-  const list = document.getElementById('list');
-  list.innerHTML = notes.length ? notes.map(n => `
-    <details>
-      <summary>${n.title || '无题'} <small>${n.date}</small>
-        <button onclick="deleteNote(${n.id});loadList();" style="float:right;">删除</button>
-      </summary>
-      <div style="white-space:pre-wrap">${n.body}</div>
-    </details>`).join('') : '<p>暂无随笔，点上方“写新随笔”开始～</p>';
+#editor textarea{min-height:180px;margin-top:8px}
+#editor .actions{
+  margin-top:15px;
+  display:flex;
+  gap:10px;
 }
+#editor button{
+  padding:8px 16px;
+  border:none;
+  border-radius:var(--radius);
+  cursor:pointer;
+  font-size:14px;
+  transition:background .2s;
+}
+#editor button:first-child{background:var(--primary);color:#fff}
+#editor button:first-child:hover{background:#0256cc}
+#editor button:last-child{background:var(--border);color:var(--text)}
+#editor button:last-child:hover{background:#d0d7de}
 
-loadList();
+/* 随笔卡片 */
+#list > details{
+  background:var(--card);
+  padding:18px;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+}
+#list > details summary{
+  cursor:pointer;
+  font-weight:600;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+#list > details small{color:#586069;font-size:13px}
+#list > details .content{
+  margin-top:10px;
+  white-space:pre-wrap;
+  font-size:15px;
+  line-height:1.7;
+}
+#list > details button{
+  background:var(--danger);
+  color:#fff;
+  border:none;
+  padding:4px 8px;
+  border-radius:4px;
+  font-size:12px;
+  cursor:pointer;
+}
+#list > details button:hover{background:#b31d28}
+
+/* 空状态 */
+#list:empty::after{
+  content:"暂无随笔，点上方“写新随笔”开始～";
+  display:block;
+  text-align:center;
+  color:#586069;
+  margin:40px 0;
+}
