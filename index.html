@@ -53,6 +53,24 @@
         .section{display:none;animation:fade .5s;}
         .section.active{display:block;}
         @keyframes fade{from{opacity:0;}to{opacity:1;}}
+
+         /*让<a class="nav-link">像按钮*/
+            .nav-link{
+            display:block;
+            width:140px;
+            height:38px;
+            margin:12px 0;
+            border:none;
+            border-radius:20px;
+            background:rgba(255,255,255,.25);
+            color:#fff;
+            font-size:15px;
+            text-align:center;
+            line-height:38px;
+            text-decoration:none;
+            transition:background .3s;
+            }
+            .nav-link:hover{background:rgba(255,255,255,.4);}
         </style> 
 
 </head>
@@ -65,9 +83,11 @@
         <nav class="nav">
             <button data-page="home">首页</button>
             <button data-page="works">工作台</button>
-            <button data-page="blog">随笔</button>
+            <!--<button data-page="blog">随笔</button>-->
+            <a herf="notes.html"class="nav-link">随笔</a>
             <button data-page="about">关于</button>
             </nav>
+        
 
             <!--背景切换按钮-->
             <div>
@@ -122,6 +142,7 @@
 
 
             
+
 
 
 
